@@ -131,7 +131,7 @@ function solve(c::Vector, A::Matrix, b::Vector, basicSolution::Vector)
         basicSolution += θstar .* direction
         println("Moved to new vertex ", basicSolution)
 
-        # We also need to manually update out basic indicies, incase of degeneracy
+        # We also need to manually update the basic indicies, in case of degeneracy
         for i in 1:length(basic_indicies)
             if basic_indicies[i] == l
                 basic_indicies[i] = index_entering_basis

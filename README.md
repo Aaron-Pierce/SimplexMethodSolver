@@ -3,7 +3,8 @@
 Solves LP problems via the simplex method.
 
 Ideally I'll implement the naive, revised, and full tableau implementations.
-For now I've only written the naive (in [naive_simplex.jl](./naive_simplex.jl)) 
+For now I've only written the naive (in [naive_simplex.jl](./naive_simplex.jl)),
+and revised (in [revised_simplex.jl](./revised_simplex.jl)).
 
 Each file will have plenty of comments to understand the approach - they pretty closely follow [the textbook](http://athenasc.com/linoptbook.html)'s way of thinking.
 [The wikipedia article](https://en.wikipedia.org/wiki/Simplex_algorithm) has the same idea, but uses a rather different notation and approach (at least for the naive implementation, the tableau is pretty similar)

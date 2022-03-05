@@ -19,12 +19,15 @@ function solve(c::Vector, A::Matrix, b::Vector, basicSolution::Vector)
         end
     end
 
+    # This will only be correct for the initial calculation
+    # of B^-1. We don't update the basic matrix
+    # at all during the iterations of the algorithm.
     basic_matrix = Matrix{Float64}(undef, num_constraints, num_constraints)
     for i in 1:length(basic_indicies)
         basic_matrix[:, i] = A[:, basic_indicies[i]]
     end
     
-    # In the revised method, we'll update b_inv
+    # In the revised method, we will update (only) b_inv
     b_inv = inv(basic_matrix)
 
 
@@ -69,7 +72,7 @@ function solve(c::Vector, A::Matrix, b::Vector, basicSolution::Vector)
 
             # The only difference in this section
             # between revised and naive is here,
-            # where instead of finding inv(basic_matrix),
+            # where instead of calling inv(basic_matrix),
             # we use the one we're updating
             basic_directions = (b_inv * (-A[:, j]))
             for i in 1:length(basic_indicies)

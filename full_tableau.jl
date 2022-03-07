@@ -1,21 +1,23 @@
 using LinearAlgebra
 
-function solve(c::Vector, A::Matrix, b::Vector, basicSolution::Vector)
+function solve(c::Vector, A::Matrix, b::Vector, basicSolution::Vector, basic_indicies::Vector = undef)
 
     # useful to not call size(A) over and over again
     num_variables = size(A, 2)
     num_constraints = size(A, 1)
 
-    # The user should pass in a non-degenerate
-    # BFS to start with, so we can figure out the 
-    # basic indicies on our own. Later we'll
-    # have to manually update these in case we
-    # arrive at a degenerate solution, where 
-    # some basic variables will be zero-valued
-    basic_indicies = Vector{Int8}(undef, 0)
-    for i in 1:length(basicSolution)
-        if basicSolution[i] != 0.0
-            append!(basic_indicies, i)
+    # It's sometimes hard to hand calculate
+    # an initial BFS, particularly to find multiple
+    # if the first few are degenerate, so you can 
+    # also pass in a degenerate solution with manually
+    # defined basic indicies, otherwise we'll calculate
+    # them, assuming basicSolution is non-degenerate
+    if basic_indicies == undef
+        basic_indicies = Vector{Int8}(undef, 0)
+        for i in 1:length(basicSolution)
+            if basicSolution[i] != 0.0
+                append!(basic_indicies, i)
+            end
         end
     end
 
@@ -51,10 +53,10 @@ function solve(c::Vector, A::Matrix, b::Vector, basicSolution::Vector)
     # Then the first column, B^-1 b
     tableau[:, 1] = vcat(0, __b_inv * b)
 
-    
+
     # Then the first row, c_j - c_b ⋅ B^-1 A_j for all j
     for j in 1:num_variables
-        tableau[1, 1 + j] = c[j] - dot(c[basic_indicies], __b_inv * A[:, j])
+        tableau[1, 1+j] = c[j] - dot(c[basic_indicies], __b_inv * A[:, j])
     end
 
     # And finally, the negative overall cost, c_b ⋅ B^-1b
@@ -66,7 +68,7 @@ function solve(c::Vector, A::Matrix, b::Vector, basicSolution::Vector)
     display(tableau)
     println()
 
-    
+
 
     # 300 is an arbitrary number of iterations to terminate
     # at, in case it cycles (which shouldn't happen because
@@ -102,7 +104,7 @@ function solve(c::Vector, A::Matrix, b::Vector, basicSolution::Vector)
             # one that is negative, as an anti-
             # cycling strategy.
 
-            reduced_cost = tableau[1, 1 + j]
+            reduced_cost = tableau[1, 1+j]
 
             if reduced_cost < 0
                 println("Found negative reduced cost c̄_", j, " = ", reduced_cost)
@@ -156,14 +158,14 @@ function solve(c::Vector, A::Matrix, b::Vector, basicSolution::Vector)
         θstar = Inf
         l = -1
 
-        u = tableau[2:(num_constraints+1), 1 + index_entering_basis]
+        u = tableau[2:(num_constraints+1), 1+index_entering_basis]
 
         for i in 1:size(u, 1) # size(u) == num_constraints
             if u[i] > 0
                 newθ = basicSolution[basic_indicies[i]] / u[i]
                 if newθ < θstar
-                   θstar = newθ
-                   l = i
+                    θstar = newθ
+                    l = i
                 end
             end
         end
@@ -201,12 +203,12 @@ function solve(c::Vector, A::Matrix, b::Vector, basicSolution::Vector)
 
         # This is (m+1)x(m+1) to match the dimension of the 
         # rows of the tableau. 
-        Q = 1 * Matrix{Float64}(I, num_constraints+1, num_constraints+1)
+        Q = 1 * Matrix{Float64}(I, num_constraints + 1, num_constraints + 1)
 
         # Knock out all rows using the l'th
         for i in 1:(num_constraints+1)
-            if i != l+1 # l + 1, not l, because of the extra row
-                Q[i,:] -= Q[l+1,:] * (tableau[i, index_entering_basis+1] / u[l]) 
+            if i != l + 1 # l + 1, not l, because of the extra row
+                Q[i, :] -= Q[l+1, :] * (tableau[i, index_entering_basis+1] / u[l])
             end
         end
 
@@ -220,15 +222,17 @@ function solve(c::Vector, A::Matrix, b::Vector, basicSolution::Vector)
     end
 end
 
+
 solve(
-    [-10, -12, -12, 0, 0, 0], # Cost vector (c)
-    [1 2 2 1 0 0 # Constraint matrix (A)
-        2 1 2 0 1 0
-        2 2 1 0 0 1],
+    [0, 0, 0, -2, -3, 1, 12],   # Cost vector (c)
+    [   1 0 0  -2  -9   1     9 # Constraint matrix (A)
+        0 1 0  1/3  1  -1/3  -2
+        0 0 1   2   3 - 1   -12 ],
     [
-        20 # b, as in Ax = b
-        20
-        20
+        0 # b, as in Ax = b
+        0
+        2
     ],
-    [0, 0, 0, 20, 20, 20] # An initial basic feasible solution
+    [0, 0, 2, 0, 0, 0, 0], # An initial basic feasible solution
+    [1, 2, 3] # Optional basic indicies, in case the initial solution is degenerate
 )

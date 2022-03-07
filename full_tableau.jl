@@ -225,9 +225,9 @@ end
 
 solve(
     [0, 0, 0, -2, -3, 1, 12],   # Cost vector (c)
-    [   1 0 0  -2  -9   1     9 # Constraint matrix (A)
+    [   1 0 0  -2  -9    1    9 # Constraint matrix (A)
         0 1 0  1/3  1  -1/3  -2
-        0 0 1   2   3 - 1   -12 ],
+        0 0 1   2   3   -1  -12 ],
     [
         0 # b, as in Ax = b
         0

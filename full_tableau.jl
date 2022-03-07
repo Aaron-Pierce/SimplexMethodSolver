@@ -72,7 +72,7 @@ function solve(c::Vector, A::Matrix, b::Vector, basicSolution::Vector)
     # at, in case it cycles (which shouldn't happen because
     # I always select the smallest index j that has a negative 
     # reduced cost, but hey anything can happen, who knows)
-    for iter in 1:4
+    for iter in 1:300
 
         println("")
         println("--- Iteration ", iter, " ---")

@@ -14,7 +14,7 @@ find a non-degenerate initial basic feasible solution to seed the algorithm with
 `full_tableau.jl` will let you supply a degenerate BFS so long as you give it 
 the basic indicies, but even finding one BFS by hand can be a pain.
 `finds_initial_solution.jl` runs the full tableau implementation, but
-will do the auxillary problem of finding an initial solution.
+will do the auxillary problem of finding an initial solution for you.
 This is very nice because it can identify infeasible problems
 and redundant constraints right at the outset, so this is the
 one to use if you actually need to solve an LP problem.

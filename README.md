@@ -9,6 +9,16 @@ revised (in [revised_simplex.jl](./revised_simplex.jl)), and full tableau method
 Each file will have plenty of comments to understand the approach - they pretty closely follow [the textbook](http://athenasc.com/linoptbook.html)'s way of thinking.
 [The wikipedia article](https://en.wikipedia.org/wiki/Simplex_algorithm) has the same idea, but uses a rather different notation and approach (at least for the naive implementation, the tableau is pretty similar but uses a different notation to describe the tableau's contents)
 
+`naive_simplex.jl`, `revised_simplex.jl`, and `full_tableau.jl` all require the user to
+find a non-degenerate initial basic feasible solution to seed the algorithm with.
+`full_tableau.jl` will let you supply a degenerate BFS so long as you give it 
+the basic indicies, but even finding one BFS by hand can be a pain.
+`finds_initial_solution.jl` runs the full tableau implementation, but
+will do the auxillary problem of finding an initial solution.
+This is very nice because it can identify infeasible problems
+and redundant constraints right at the outset, so this is the
+one to use if you actually need to solve an LP problem.
+
 # Example
 
 (From `full_tableau.jl`)
